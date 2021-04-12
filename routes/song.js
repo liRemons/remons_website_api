@@ -1,12 +1,10 @@
 const router = require("koa-router")();
-const mysql = require("../db");
 const { upload } = require("../utils");
-router.prefix("/music");
-router.get("/getMusicList", async (ctx) => {
-  const sql = "SELECT * from MUSIC_LIST";
-  let data = await mysql.query({ sql });
-  ctx.body = data;
-});
+const controller = require('../controller/song')
+router.prefix("/song");
+
+router.get('/queryList',controller.find)
+
 
 router.post("/uploadMusicFile", async (ctx) => {
   const file = ctx.request.files.file; // 获取上传文件
