@@ -21,9 +21,9 @@ const upload = ({ file, folder }) => {
     }
   });
 };
-
+// 生成唯一UUID
 const uuid = () => UUID.v1();
-
+// 生成 token
 const createToken = (data = {}, dayCount = 7) => {
   const obj = {};
   const secret = "Remons";
@@ -32,7 +32,7 @@ const createToken = (data = {}, dayCount = 7) => {
   obj.expiresIn = 1000 * 60 * 60 * 24 * dayCount;
   return jwt.sign(obj, secret);
 };
-
+// 验证token
 const varifyToken = (token) => {
   let result = null;
   const secret = "Remons";
