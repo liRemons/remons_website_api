@@ -1,5 +1,7 @@
 const fs = require("fs");
 const path = require("path");
+const UUID = require("uuid");
+const jwt = require("jsonwebtoken");
 const upload = ({ file, folder }) => {
   return new Promise((resolve, reject) => {
     try {
@@ -19,6 +21,31 @@ const upload = ({ file, folder }) => {
     }
   });
 };
+
+const uuid = () => UUID.v1();
+
+const createToken = (data = {}, dayCount = 7) => {
+  const obj = {};
+  const secret = "Remons";
+  obj.data = data;
+  obj.ctime = new Date().getTime();
+  obj.expiresIn = 1000 * 60 * 60 * 24 * dayCount;
+  return jwt.sign(obj, secret);
+};
+
+const varifyToken = (token) => {
+  let result = null;
+  const secret = "Remons";
+  let { data, ctime, expiresIn } = jwt.verify(token, secret);
+  const nowTime = new Date().getTime();
+  if (nowTime - ctime < expiresIn) {
+    result = data;
+  }
+  return result;
+};
 module.exports = {
   upload,
+  uuid,
+  createToken,
+  varifyToken,
 };

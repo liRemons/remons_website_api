@@ -7,6 +7,8 @@ const logger = require("koa-logger");
 const koaBody = require("koa-body");
 
 const InitManger = require('./core/init')
+
+const {createToken,varifyToken} = require('./utils')
 // error handler
 onerror(app);
 
@@ -36,6 +38,10 @@ app
     console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
   });
 
+
+
+  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7Im5hbWUiOiJyZW1vbnMifSwiY3RpbWUiOjE2MTgzMjA5NjQzMTgsImV4cGlyZXNJbiI6NjA0ODAwMDAwLCJpYXQiOjE2MTgzMjA5NjR9.uPGuDVNuS6GjysnKD8rQNTIWM2FvA_m9xYnALtnEk0s'
+  varifyToken(token)
 // routes
 InitManger.InitCore(app)
 // error-handling
