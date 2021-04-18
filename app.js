@@ -5,12 +5,17 @@ const json = require("koa-json");
 const onerror = require("koa-onerror");
 const logger = require("koa-logger");
 const koaBody = require("koa-body");
-
+const statics = require('koa-static')
+const path = require('path')
 const InitManger = require('./core/init')
 
 const {createToken,varifyToken} = require('./utils')
 // error handler
 onerror(app);
+const staticPath = './'
+app.use(statics(
+  path.join(__dirname, staticPath)
+))
 
 app.use(
   koaBody({
@@ -20,6 +25,7 @@ app.use(
     },
   })
 );
+
 app
   .use(json())
   .use(logger())
