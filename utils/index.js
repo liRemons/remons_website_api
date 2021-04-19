@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const UUID = require("uuid");
 const jwt = require("jsonwebtoken");
-const methods = require('methods-r')
+const methods = require("methods-r");
 const upload = ({ file, folder }) => {
   return new Promise((resolve, reject) => {
     try {
@@ -58,6 +58,25 @@ const initResult = ({ code = 200, success = true, msg = "成功" }) => {
     msg,
   };
 };
+// 获取请求参数
+const REQ_ARG = ({ ctx, method }) => {
+  let data;
+  switch (method) {
+    case "GET":
+      const { query } = ctx.request;
+      data = query;
+      break;
+    case "POST":
+    case "PUT":
+    case "DELETE":
+      const { body } = ctx.request;
+      data = body;
+      break;
+    default:
+      break;
+  }
+  return data;
+};
 module.exports = {
   upload,
   uuid,
@@ -65,5 +84,6 @@ module.exports = {
   varifyToken,
   initPage,
   initResult,
-  ...methods
+  REQ_ARG,
+  ...methods,
 };

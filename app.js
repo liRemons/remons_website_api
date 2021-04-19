@@ -5,21 +5,30 @@ const json = require("koa-json");
 const onerror = require("koa-onerror");
 const logger = require("koa-logger");
 const koaBody = require("koa-body");
-const statics = require('koa-static')
-const path = require('path')
-const InitManger = require('./core/init')
-
-const {createToken,varifyToken} = require('./utils')
+const statics = require("koa-static");
+const path = require("path");
+const InitManger = require("./core/init");
+const cors = require('koa2-cors'); //跨域处理
+const { createToken, varifyToken } = require("./utils");
 // error handler
 onerror(app);
-const staticPath = './'
-app.use(statics(
-  path.join(__dirname, staticPath)
-))
+app.use(
+  cors({
+      origin: '*',
+      maxAge: 5, //指定本次预检请求的有效期，单位为秒。
+      credentials: true, //是否允许发送Cookie
+      allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], //设置所允许的HTTP请求方法
+      allowHeaders: ['*'], //设置服务器支持的所有头信息字段
+      exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'] //设置获取其他自定义字段
+  })
+);
+const staticPath = "./";
+app.use(statics(path.join(__dirname, staticPath)));
 
 app.use(
   koaBody({
     multipart: true,
+    strict: false,
     formidable: {
       maxFileSize: 200 * 1024 * 1024, // 设置上传文件大小最大限制，默认2M
     },
@@ -44,12 +53,11 @@ app
     console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
   });
 
-
-
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7Im5hbWUiOiJyZW1vbnMifSwiY3RpbWUiOjE2MTgzMjA5NjQzMTgsImV4cGlyZXNJbiI6NjA0ODAwMDAwLCJpYXQiOjE2MTgzMjA5NjR9.uPGuDVNuS6GjysnKD8rQNTIWM2FvA_m9xYnALtnEk0s'
-  varifyToken(token)
+const token =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7Im5hbWUiOiJyZW1vbnMifSwiY3RpbWUiOjE2MTgzMjA5NjQzMTgsImV4cGlyZXNJbiI6NjA0ODAwMDAwLCJpYXQiOjE2MTgzMjA5NjR9.uPGuDVNuS6GjysnKD8rQNTIWM2FvA_m9xYnALtnEk0s";
+varifyToken(token);
 // routes
-InitManger.InitCore(app)
+InitManger.InitCore(app);
 // error-handling
 app.on("error", (err, ctx) => {
   console.error("server error", err, ctx);
