@@ -1,4 +1,4 @@
-const router = require("koa-router")();
+const query = require("./mysql");
 const {
   upload,
   initPage,
@@ -7,10 +7,6 @@ const {
   dateFormat,
   REQ_ARG,
 } = require("../utils");
-const controller = require("../controller/song");
-const query = require("./mysql");
-router.prefix("/song");
-
 const search = async ({ sql }) => {
   const result = initResult({});
   const res = await query(sql);
@@ -64,32 +60,28 @@ const delSinger = async (ctx) => {
   const result = initResult({});
   ctx.body = result;
 };
-
-// 获取歌曲列表
-router.get("/queryList", (ctx) => querySongList(ctx));
-// 添加歌手
-router.post("/addSinger", (ctx) => addSinger(ctx));
-// 修改歌手
-router.put("/updateSinger", (ctx) => updateSinger(ctx));
-// 获取歌手列表
-router.get("/querySingerList", (ctx) => querySingerList(ctx));
-// 歌手图片上传
-router.post("/uploadSingerPhoto", async (ctx) => {
+// 上传歌手图片
+const uploadSingerPhoto = async(ctx) => {
   const file = ctx.request.files.file; // 获取上传文件
   const path = await upload({ file, folder: "music/singer" });
   ctx.body = {
     path,
   };
-});
-// 删除歌手
-router.delete("/delSinger", (ctx) => delSinger(ctx));
-// 歌曲上传
-router.post("/uploadMusicFile", async (ctx) => {
+}
+// 
+const uploadMusicFile = async(ctx) => {
   const file = ctx.request.files.file; // 获取上传文件
   const path = await upload({ file, folder: "music/file" });
   ctx.body = {
     path,
   };
-});
+}
 
-module.exports = router;
+module.exports ={
+  querySongList,
+  addSinger,
+  updateSinger,
+  querySingerList,
+  delSinger,
+  uploadSingerPhoto
+}
