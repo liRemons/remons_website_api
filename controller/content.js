@@ -31,7 +31,7 @@ const addTechClass = async (ctx) => {
   const { name, icon } = REQ_ARG({ ctx, method: "POST" });
   let sql = `INSERT INTO tech_class 
     (id,name,icon,createTime) VALUES 
-    ('${uuid()}','${name}','${icon||''}','${dateFormat()}')`;
+    ('${uuid()}','${name}','${icon || ""}','${dateFormat()}')`;
   const res = await query(sql);
   ctx.body = initResult({});
 };
@@ -62,6 +62,15 @@ const delTechClass = async (ctx) => {
   ctx.body = result;
 };
 
+// 查询技术文章列表
+const queryArticleList = async (ctx) => {
+  const { title } = REQ_ARG({ ctx, method: "GET" });
+  let sql = `SELECT A.id, A.title, A.url, A.techClassId, B.name AS techClassName, DATE_FORMAT(A.createTime,'%Y-%m-%d %H:%I:%S') AS createTime
+  FROM tech_article AS A
+  LEFT OUTER JOIN tech_class AS B ON A.techClassId = B.id`;
+  const result = await search({ sql });
+  ctx.body = result;
+};
 // 创建markdown文件
 const createMarkdown = async ({ content, folder }) => {
   fs.writeFile(path.join(__dirname, "../upload/" + folder), content, (err) => {
@@ -71,13 +80,40 @@ const createMarkdown = async ({ content, folder }) => {
 };
 // 添加文章
 const addArticle = async (ctx) => {
-  const { content } = REQ_ARG({ ctx, method: "POST" });
-  const pathname = await createMarkdown({
+  const { content, techClassId, title } = REQ_ARG({ ctx, method: "POST" });
+  const url = await createMarkdown({
     content,
-    folder: "content/markdown/test.md",
+    folder: `content/markdown/${title}.md`,
   });
-  ctx.body = "aaa";
+  let sql = `INSERT INTO tech_article
+    (id,title,techClassId,url,createTime) VALUES 
+    ('${uuid()}','${title}','${techClassId || ""}',
+    '${url || ""}','${dateFormat()}')`;
+  const res = await query(sql);
+  ctx.body = initResult({});
 };
+// 更新文章
+const updateArticle = async (ctx) => {
+  const { content, id, title, techClassId } = REQ_ARG({ ctx, method: "PUT" });
+  const url = await createMarkdown({
+    content,
+    folder: `content/markdown/${title}.md`,
+  });
+  let sql = `update tech_article set 
+              title='${title}',
+              techClassId='${techClassId}',
+              url='${url}' where id ='${id}'`;
+  const res = await query(sql);
+  ctx.body = initResult({});
+};
+// 删除文章
+const delArticle = async (ctx) => {
+  const { ids } = REQ_ARG({ ctx, method: "DELETE" });
+  let sql = `delete from tech_article where id in ('${ids.join("','")}')`;
+  const res = await query(sql);
+  const result = initResult({});
+  ctx.body = result;
+}
 
 module.exports = {
   queryTechClassList,
@@ -86,4 +122,7 @@ module.exports = {
   updateTechClass,
   delTechClass,
   addArticle,
+  queryArticleList,
+  updateArticle,
+  delArticle
 };

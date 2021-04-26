@@ -6,6 +6,9 @@ const {
   updateTechClass,
   delTechClass,
   addArticle,
+  queryArticleList,
+  updateArticle,
+  delArticle,
 } = require("../controller/content");
 router.prefix("/content");
 
@@ -22,4 +25,10 @@ router.delete("/delTechClass", (ctx) => delTechClass(ctx));
 // 新增文章
 router.post("/addArticle", (ctx) => addArticle(ctx));
 
+// 查询文章列表
+router.get("/queryArticleList", (ctx) => queryArticleList(ctx));
+// 更新文章
+router.put("/updateArticle", (ctx) => updateArticle(ctx));
+// 删除文章
+router.delete("/delArticle", (ctx) => delArticle(ctx));
 module.exports = router;
