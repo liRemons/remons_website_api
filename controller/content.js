@@ -73,9 +73,15 @@ const queryArticleList = async (ctx) => {
 };
 // 创建markdown文件
 const createMarkdown = async ({ content, folder }) => {
-  fs.writeFile(path.join(__dirname, "../upload/" + folder), content, (err) => {
-    if (err) throw err;
-    return "/upload/" + folder;
+  return new Promise((resolve) => {
+    fs.writeFile(
+      path.join(__dirname, "../upload/" + folder),
+      content,
+      (err) => {
+        if (err) throw err;
+        resolve("/upload/" + folder);
+      }
+    );
   });
 };
 // 添加文章
@@ -113,7 +119,7 @@ const delArticle = async (ctx) => {
   const res = await query(sql);
   const result = initResult({});
   ctx.body = result;
-}
+};
 
 module.exports = {
   queryTechClassList,
@@ -124,5 +130,5 @@ module.exports = {
   addArticle,
   queryArticleList,
   updateArticle,
-  delArticle
+  delArticle,
 };
