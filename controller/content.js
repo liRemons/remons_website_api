@@ -64,10 +64,16 @@ const delTechClass = async (ctx) => {
 
 // 查询技术文章列表
 const queryArticleList = async (ctx) => {
-  const { title } = REQ_ARG({ ctx, method: "GET" });
+  const { title, techClassId } = REQ_ARG({ ctx, method: "GET" });
   let sql = `SELECT A.id, A.title, A.url, A.techClassId, B.name AS techClassName, DATE_FORMAT(A.createTime,'%Y-%m-%d %H:%I:%S') AS createTime
   FROM tech_article AS A
-  LEFT OUTER JOIN tech_class AS B ON A.techClassId = B.id`;
+  LEFT OUTER JOIN tech_class AS B ON A.techClassId = B.id where 1=1 `;
+  if(techClassId){
+    sql += `and A.techClassId = '${techClassId}' `
+  }
+  if(title){
+    sql += `and A.title = '${title}'`
+  }
   const result = await search({ sql });
   ctx.body = result;
 };
@@ -112,6 +118,7 @@ const updateArticle = async (ctx) => {
   const res = await query(sql);
   ctx.body = initResult({});
 };
+
 // 删除文章
 const delArticle = async (ctx) => {
   const { ids } = REQ_ARG({ ctx, method: "DELETE" });
