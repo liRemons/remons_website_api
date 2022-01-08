@@ -33,9 +33,9 @@ const uploadDoc = async (ctx) => {
 };
 
 const addDoc = async (ctx) => {
-  const { title, url } = REQ_ARG({ ctx, method: 'GET' });
+  const { title, url } = REQ_ARG({ ctx, method: 'POST' });
   let sql = `INSERT INTO doc
-    (id,title,techClassId,url,createTime) VALUES 
+    (id,title,url,createTime) VALUES 
     ('${uuid()}','${title}','${url || ''}','${dateFormat()}')`;
   const res = await query(sql);
   ctx.body = initResult({});

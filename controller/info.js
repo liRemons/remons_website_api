@@ -11,10 +11,10 @@ const search = async ({ sql }) => {
 };
 // 查询
 const queryMyInfo = async (ctx) => {
-  const { key } = REQ_ARG({ ctx, method: 'GET' });
+  const { keyName } = REQ_ARG({ ctx, method: 'GET' });
   let sql = `select * from my_info where 1=1 `;
-  if (key) {
-    sql += `and key='${key}'`;
+  if (keyName) {
+    sql += `and keyName='${keyName}'`;
   }
   const result = await search({ sql });
   ctx.body = result;
@@ -29,21 +29,27 @@ const uploadMyInfo = async (ctx) => {
 };
 
 const addMyInfo = async (ctx) => {
-  const { key, value, url } = REQ_ARG({ ctx, method: 'GET' });
+  const { keyName, val, url, description } = REQ_ARG({ ctx, method: 'POST' });
   let sql = `INSERT INTO my_info
-    (id,key,value,url) VALUES 
-    ('${uuid()}','${key}','${value || ''}','${url || ''}')`;
+    (id,keyName,val,url,description) VALUES ('${uuid()}','${keyName || ''}','${
+    val || ''
+  }','${url || ''}','${description || ''}')`;
+  console.log(sql);
   const res = await query(sql);
   ctx.body = initResult({});
 };
 
 // 更新
 const updateMyInfo = async (ctx) => {
-  const { key, id, url, value } = REQ_ARG({ ctx, method: 'PUT' });
+  const { keyName, id, url, val, description } = REQ_ARG({
+    ctx,
+    method: 'PUT',
+  });
   let sql = `update my_info set 
-             key='${key}',
+             keyName='${keyName}',
              url='${url}',
-             value='${value}',
+             val='${val}',
+             description='${description}'
             where id ='${id}'`;
   const res = await query(sql);
   ctx.body = initResult({});

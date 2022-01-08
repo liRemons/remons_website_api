@@ -11,12 +11,12 @@ router.prefix('/info');
 // 查询
 router.get('/queryMyInfo', (ctx) => queryMyInfo(ctx));
 // 上传文件
-router.get('/uploadMyInfo', (ctx) => uploadMyInfo(ctx));
+router.post('/uploadMyInfo', (ctx) => uploadMyInfo(ctx));
 // 新增
-router.get('/addMyInfo', (ctx) => addMyInfo(ctx));
+router.post('/addMyInfo', (ctx) => addMyInfo(ctx));
 // 删除
-router.get('/deleteMyInfo', (ctx) => deleteMyInfo(ctx));
+router.delete('/deleteMyInfo', (ctx) => deleteMyInfo(ctx));
 // 更新
-router.get('/updateMyInfo', (ctx) => updateMyInfo(ctx));
+router.put('/updateMyInfo', (ctx) => updateMyInfo(ctx));
 
 module.exports = router;

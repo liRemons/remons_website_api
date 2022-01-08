@@ -11,12 +11,12 @@ router.prefix('/doc');
 // 查询文档列表
 router.get('/queryDocList', (ctx) => queryDocList(ctx));
 // 上传文件
-router.get('/uploadDoc', (ctx) => uploadDoc(ctx));
+router.post('/uploadDoc', (ctx) => uploadDoc(ctx));
 // 新增文档
-router.get('/addDoc', (ctx) => addDoc(ctx));
+router.post('/addDoc', (ctx) => addDoc(ctx));
 // 删除文档
-router.get('/deleteDoc', (ctx) => deleteDoc(ctx));
+router.delete('/deleteDoc', (ctx) => deleteDoc(ctx));
 // 更新文档
-router.get('/updateDoc', (ctx) => updateDoc(ctx));
+router.put('/updateDoc', (ctx) => updateDoc(ctx));
 
 module.exports = router;
