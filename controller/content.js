@@ -132,7 +132,7 @@ const delArticle = async (ctx) => {
 const markdownToHTML = async (ctx) => {
   const { content } = REQ_ARG({ ctx, method: 'POST' });
   const result = await mdToHTML(content);
-  ctx.body = { ...initResult({}), ...result };
+  ctx.body = { data: result, ...initResult({}) };
 };
 
 module.exports = {
