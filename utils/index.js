@@ -1,8 +1,13 @@
-const fs = require("fs");
-const path = require("path");
-const UUID = require("uuid");
-const jwt = require("jsonwebtoken");
-const methods = require("methods-r");
+const fs = require('fs');
+const path = require('path');
+const UUID = require('uuid');
+const jwt = require('jsonwebtoken');
+const methods = require('methods-r');
+const markdownIt = require('markdown-it');
+const markdownItAnchor = require('markdown-it-anchor');
+const markdownItTOC = require('markdown-it-toc-done-right');
+const hljs = require('highlight.js');
+const uslug = require('uslug');
 const upload = ({ file, folder }) => {
   return new Promise((resolve, reject) => {
     try {
@@ -10,7 +15,7 @@ const upload = ({ file, folder }) => {
       const reader = fs.createReadStream(file.path);
 
       let filePath =
-        path.join(__dirname, "../upload/" + folder) + `/${file.name}`;
+        path.join(__dirname, '../upload/' + folder) + `/${file.name}`;
 
       // 创建可写流
       const upStream = fs.createWriteStream(filePath);
@@ -27,7 +32,7 @@ const uuid = () => UUID.v1();
 // 生成 token
 const createToken = (data = {}, dayCount = 7) => {
   const obj = {};
-  const secret = "Remons";
+  const secret = 'Remons';
   obj.data = data;
   obj.ctime = new Date().getTime();
   obj.expiresIn = 1000 * 60 * 60 * 24 * dayCount;
@@ -36,7 +41,7 @@ const createToken = (data = {}, dayCount = 7) => {
 // 验证 token
 const varifyToken = (token) => {
   let result = null;
-  const secret = "Remons";
+  const secret = 'Remons';
   let { data, ctime, expiresIn } = jwt.verify(token, secret);
   const nowTime = new Date().getTime();
   if (nowTime - ctime < expiresIn) {
@@ -51,7 +56,7 @@ const initPage = ({ page }) => {
   return { limitStart, limitEnd };
 };
 // 格式化结果输出
-const initResult = ({ code = 200, success = true, msg = "成功" }) => {
+const initResult = ({ code = 200, success = true, msg = '成功' }) => {
   return {
     code,
     success,
@@ -62,13 +67,13 @@ const initResult = ({ code = 200, success = true, msg = "成功" }) => {
 const REQ_ARG = ({ ctx, method }) => {
   let data;
   switch (method) {
-    case "GET":
+    case 'GET':
       const { query } = ctx.request;
       data = query;
       break;
-    case "POST":
-    case "PUT":
-    case "DELETE":
+    case 'POST':
+    case 'PUT':
+    case 'DELETE':
       const { body } = ctx.request;
       data = body;
       break;
@@ -77,6 +82,43 @@ const REQ_ARG = ({ ctx, method }) => {
   }
   return data;
 };
+
+// markdown => html
+const mdToHTML = (content) => {
+  let timer = null;
+  let anchor = [];
+  const uslugify = (s) => uslug(s);
+  const MD = new markdownIt({
+    langPrefix: 'language-',
+    highlight: (code) => {
+      return hljs.highlightAuto(code).value;
+    },
+  })
+    .use(markdownItAnchor, {
+      permalink: true,
+      permalinkBefore: true,
+      permalinkSymbol: '#',
+      slugify: uslugify,
+    })
+    .use(markdownItTOC, {
+      callback: (html, ast) => {
+        anchor = ast.c;
+      },
+    });
+  const info = MD.render(content);
+  return new Promise((resolve, reject) => {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      resolve({
+        info,
+        anchor,
+      });
+    }, 500);
+  });
+};
+
 module.exports = {
   upload,
   uuid,
@@ -85,5 +127,6 @@ module.exports = {
   initPage,
   initResult,
   REQ_ARG,
+  mdToHTML,
   ...methods,
 };

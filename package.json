@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "debug": "^4.1.1",
+    "highlight.js": "^11.5.1",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.7.0",
     "koa-body": "^4.2.0",
@@ -22,10 +23,14 @@
     "koa-static": "^5.0.0",
     "koa-views": "^6.2.0",
     "koa2-cors": "^2.0.6",
+    "markdown-it": "^13.0.0",
+    "markdown-it-anchor": "^8.6.2",
+    "markdown-it-toc-done-right": "^4.2.0",
     "methods-r": "^1.2.1",
     "mysql": "^2.18.1",
     "pug": "^2.0.3",
     "require-directory": "^2.1.1",
+    "uslug": "^1.0.4",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

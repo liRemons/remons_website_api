@@ -8,6 +8,7 @@ const {
   uuid,
   dateFormat,
   REQ_ARG,
+  mdToHTML,
 } = require('../utils');
 
 const search = async ({ sql }) => {
@@ -128,6 +129,12 @@ const delArticle = async (ctx) => {
   ctx.body = result;
 };
 
+const markdownToHTML = async (ctx) => {
+  const { content } = REQ_ARG({ ctx, method: 'POST' });
+  const result = await mdToHTML(content);
+  ctx.body = { ...initResult({}), ...result };
+};
+
 module.exports = {
   queryTechClassList,
   addTechClass,
@@ -138,4 +145,5 @@ module.exports = {
   queryArticleList,
   updateArticle,
   delArticle,
+  markdownToHTML,
 };
