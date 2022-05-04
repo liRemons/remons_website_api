@@ -7,6 +7,7 @@ const authToken = async (ctx, next) => {
     return;
   }
   if (ctx.method.toLowerCase() !== 'get') {
+    console.log(ctx.header.remons_token);
     if (!ctx.header.remons_token) {
       ctx.body = {
         code: 401,
