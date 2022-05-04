@@ -8,6 +8,7 @@ const koaBody = require("koa-body");
 const statics = require("koa-static");
 const path = require("path");
 const InitManger = require("./core/init");
+const authToken = require('./middleware/authToken');
 const cors = require('koa2-cors'); //跨域处理
 const { createToken, varifyToken } = require("./utils");
 // error handler
@@ -44,6 +45,7 @@ app
       extension: "pug",
     })
   )
+  .use(authToken)
 
   // logger
   .use(async (ctx, next) => {

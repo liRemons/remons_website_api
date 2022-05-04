@@ -8,6 +8,7 @@ const markdownItAnchor = require('markdown-it-anchor');
 const markdownItTOC = require('markdown-it-toc-done-right');
 const hljs = require('highlight.js');
 const uslug = require('uslug');
+const { encrypt, decrypt } = require('./crypto');
 const upload = ({ file, folder }) => {
   return new Promise((resolve, reject) => {
     try {
@@ -120,7 +121,7 @@ const mdToHTML = (content) => {
             nodeName: `H${item.l}`,
           };
           delete item.c;
-          return obj
+          return obj;
         });
       };
       resolve({
@@ -140,5 +141,7 @@ module.exports = {
   initResult,
   REQ_ARG,
   mdToHTML,
+  encrypt,
+  decrypt,
   ...methods,
 };
