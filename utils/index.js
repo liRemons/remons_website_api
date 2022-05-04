@@ -111,11 +111,23 @@ const mdToHTML = (content) => {
       clearTimeout(timer);
     }
     timer = setTimeout(() => {
+      const format = (data) => {
+        return data.map((item) => {
+          const obj = {
+            href: uslugify(item.n.trim()),
+            title: item.n.trim(),
+            children: format(item.c),
+            nodeName: `H${item.l}`,
+          };
+          delete item.c;
+          return obj
+        });
+      };
       resolve({
         info,
-        anchor,
+        anchor: format(anchor),
       });
-    }, 500);
+    }, 300);
   });
 };
 
