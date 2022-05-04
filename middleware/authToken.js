@@ -7,7 +7,7 @@ const authToken = async (ctx, next) => {
     return;
   }
   if (ctx.method.toLowerCase() !== 'get') {
-    if (ctx.header.remons_token !== 'null') {
+    if (ctx.header.remons_token === 'null') {
       ctx.body = {
         code: 401,
         success: false,
