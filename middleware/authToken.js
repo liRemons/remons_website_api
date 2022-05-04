@@ -6,6 +6,7 @@ const authToken = async (ctx, next) => {
     await next();
     return;
   }
+  console.log(ctx.method.toLowerCase(), 'ctx.method.toLowerCase()');
   if (ctx.method.toLowerCase() !== 'get') {
     if (ctx.header.remons_token === 'null') {
       ctx.body = {
