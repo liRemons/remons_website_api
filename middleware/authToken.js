@@ -7,16 +7,7 @@ const authToken = async (ctx, next) => {
     return;
   }
   if (ctx.method.toLowerCase() !== 'get') {
-    console.log(!ctx.header.remons_token,ctx.header.remons_token, 'ctx.header.remons_token');
-    if (!ctx.header.remons_token) {
-      ctx.body = {
-        code: 401,
-        success: false,
-        msg: 'TOKEN 无效',
-      };
-      return;
-    }
-    const info = varifyToken(ctx.header.remons_token || '');
+    const info = varifyToken(ctx.header.remons_token);
     if (info) {
       const { password, account } = info;
       let sql = `select * from user where 1=1 and account=${account}`;
