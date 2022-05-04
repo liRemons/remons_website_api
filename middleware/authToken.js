@@ -7,6 +7,14 @@ const authToken = async (ctx, next) => {
     return;
   }
   if (ctx.method.toLowerCase() !== 'get') {
+    if (ctx.header.remons_token !== 'null') {
+      ctx.body = {
+        code: 401,
+        success: false,
+        msg: 'TOKEN 无效',
+      };
+      return;
+    }
     const info = varifyToken(ctx.header.remons_token);
     if (info) {
       const { password, account } = info;
