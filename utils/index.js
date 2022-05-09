@@ -91,9 +91,14 @@ const mdToHTML = (content) => {
   const uslugify = (s) => uslug(s);
   const MD = new markdownIt({
     langPrefix: 'language-',
-    highlight: (code) => {
-      return hljs.highlightAuto(code).value;
-    },
+    highlight: function (str, lang) {
+      if (lang && hljs.getLanguage(lang)) {
+        try {
+          return hljs.highlight(str, { language: lang }).value;
+        } catch (__) {}
+      }
+      return '';
+    }
   })
     .use(markdownItAnchor, {
       permalink: true,
