@@ -20,6 +20,14 @@ const search = async ({ sql }) => {
   result.data = res;
   return result;
 };
+
+const queryUserEumn = async (ctx) => {
+  let sql = `select name,id,account from user where 1=1 `;
+  const result = await search({ sql });
+  ctx.body = {
+    ...result
+  };
+}
 // 查询
 const queryUser = async (ctx) => {
   let userId = '';
@@ -143,4 +151,5 @@ module.exports = {
   addUser,
   login,
   search,
+  queryUserEumn
 };

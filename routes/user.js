@@ -6,12 +6,14 @@ const {
   updateUser,
   queryUser,
   uploadUser,
-  login
+  login,
+  queryUserEumn
 } = require('../controller/user');
 router.prefix('/user');
 
 // 查询
 router.get('/queryUser', (ctx) => queryUser(ctx));
+router.get('/queryUserEumn', (ctx) => queryUserEumn(ctx));
 // 上传文件
 router.post('/uploadUser', (ctx) => uploadUser(ctx));
 // 新增
