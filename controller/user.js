@@ -35,6 +35,7 @@ const queryUser = async (ctx) => {
         success: false,
         msg: '无权限',
       };
+      return
     }
   }
   const { name, account } = REQ_ARG({ ctx, method: 'GET' });
