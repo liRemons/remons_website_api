@@ -16,9 +16,9 @@ const authToken = async (ctx, next) => {
       return;
     }
     const info = varifyToken(ctx.header.remons_token);
-    if (info) {
-      const { password, account } = info;
-      let sql = `select * from user where 1=1 and account=${account}`;
+    const { password, id } = info;
+    if (id) {
+      let sql = `select * from user where 1=1 and id='${id || ''}'`;
       const result = await search({ sql });
       const resultInfo = result.data[0] || {};
       if (

@@ -34,7 +34,7 @@ const queryUser = async (ctx) => {
     ...result,
     data: (result.data || []).map((item) => ({
       ...item,
-      password: decrypt({ DES_IV, DES_KEY, MSG: item.password, id: result.data[0].id }),
+      password: decrypt({ DES_IV, DES_KEY, MSG: item.password }),
     })),
   };
 };
@@ -106,7 +106,7 @@ const login = async (ctx) => {
     ctx.body = {
       ...result,
       data: {
-        token: createToken({ account, password }),
+        token: createToken({ account, password, id: result.data[0].id }),
       },
     };
   } else {

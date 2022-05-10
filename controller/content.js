@@ -40,6 +40,7 @@ const queryTechClassList = async (ctx) => {
 // 新增技术分类
 const addTechClass = async (ctx) => {
   const { name, icon, userIds } = REQ_ARG({ ctx, method: 'POST' });
+  console.log(userIds);
   let sql = `INSERT INTO tech_class 
     (id,name,icon,userIds,createTime) VALUES 
     ('${uuid()}','${name}','${icon || ''}','${userIds || ''}','${dateFormat()}')`;
