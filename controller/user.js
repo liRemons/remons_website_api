@@ -10,6 +10,7 @@ const {
   encrypt,
   decrypt,
   createToken,
+  varifyToken,
 } = require('../utils');
 const { DES_IV, DES_KEY } = require('../utils/config');
 
@@ -21,6 +22,21 @@ const search = async ({ sql }) => {
 };
 // 查询
 const queryUser = async (ctx) => {
+  let userId = '';
+  if (ctx.headers.remons_token) {
+    userId = varifyToken(ctx.headers.remons_token).id;
+  }
+  let sqlUserId = `select * from user where id='${userId}'`;
+  const userResult = await search({ sql: sqlUserId });
+  if (userResult.data.length) {
+    if ((userResult.data[0].role || '').includes('admin')) {
+      ctx.body = {
+        code: 403,
+        success: false,
+        msg: '无权限',
+      };
+    }
+  }
   const { name, account } = REQ_ARG({ ctx, method: 'GET' });
   let sql = `select * from user where 1=1 `;
   if (name) {
@@ -125,5 +141,5 @@ module.exports = {
   queryUser,
   addUser,
   login,
-  search
+  search,
 };
