@@ -25,9 +25,9 @@ const queryUserEumn = async (ctx) => {
   let sql = `select name,id,account from user where 1=1 `;
   const result = await search({ sql });
   ctx.body = {
-    ...result
+    ...result,
   };
-}
+};
 // 查询
 const queryUser = async (ctx) => {
   let userId = '';
@@ -36,15 +36,19 @@ const queryUser = async (ctx) => {
   }
   let sqlUserId = `select * from user where id='${userId}'`;
   const userResult = await search({ sql: sqlUserId });
+  let role = '';
   if (userResult.data.length) {
     if ((userResult.data[0].role || '').includes('admin')) {
-      ctx.body = {
-        code: 403,
-        success: false,
-        msg: '无权限',
-      };
-      return
+      role = 'admin';
     }
+  }
+  if (role !== 'admin') {
+    ctx.body = {
+      code: 403,
+      success: false,
+      msg: '无权限',
+    };
+    return;
   }
   const { name, account } = REQ_ARG({ ctx, method: 'GET' });
   let sql = `select * from user where 1=1 `;
@@ -151,5 +155,5 @@ module.exports = {
   addUser,
   login,
   search,
-  queryUserEumn
+  queryUserEumn,
 };
