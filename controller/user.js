@@ -34,7 +34,7 @@ const queryUser = async (ctx) => {
     ...result,
     data: (result.data || []).map((item) => ({
       ...item,
-      password: decrypt({ DES_IV, DES_KEY, MSG: item.password }),
+      password: decrypt({ DES_IV, DES_KEY, MSG: item.password, id: result.data[0].id }),
     })),
   };
 };

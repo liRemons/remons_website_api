@@ -9,6 +9,7 @@ const {
   dateFormat,
   REQ_ARG,
   mdToHTML,
+  varifyToken
 } = require('../utils');
 
 const search = async ({ sql }) => {
@@ -20,19 +21,28 @@ const search = async ({ sql }) => {
 
 // 查询技术分类
 const queryTechClassList = async (ctx) => {
+  let userId = ''
+  if (ctx.headers.remons_token) {
+    userId = varifyToken(ctx.headers.remons_token).id;
+  };
   const { name } = REQ_ARG({ ctx, method: 'GET' });
-  let sql = `SELECT id,name,icon,DATE_FORMAT(createTime,'%Y-%m-%d %H:%I:%S') AS createTime 
+  let sql = `SELECT id,name,icon,DATE_FORMAT(createTime,'%Y-%m-%d %H:%I:%S') AS createTime,userIds
               FROM tech_class
-              WHERE NAME LIKE '%${name || ''}%'`;
+              WHERE NAME LIKE '%${name || ''}%' `;
+  if (userId) {
+    sql += `AND userIds is null OR userIds LIKE '%${userId || ''}%'`
+  } else {
+    sql += `AND userIds is null`
+  }
   const result = await search({ sql });
   ctx.body = result;
 };
 // 新增技术分类
 const addTechClass = async (ctx) => {
-  const { name, icon } = REQ_ARG({ ctx, method: 'POST' });
+  const { name, icon, userIds } = REQ_ARG({ ctx, method: 'POST' });
   let sql = `INSERT INTO tech_class 
-    (id,name,icon,createTime) VALUES 
-    ('${uuid()}','${name}','${icon || ''}','${dateFormat()}')`;
+    (id,name,icon,userIds,createTime) VALUES 
+    ('${uuid()}','${name}','${icon || ''}','${userIds || ''}','${dateFormat()}')`;
   const res = await query(sql);
   ctx.body = initResult({});
 };
@@ -46,10 +56,11 @@ const uploadTechClassIcon = async (ctx) => {
 };
 // 更新技术分类
 const updateTechClass = async (ctx) => {
-  const { name, id, icon } = REQ_ARG({ ctx, method: 'PUT' });
+  const { name, id, icon, userIds } = REQ_ARG({ ctx, method: 'PUT' });
   let sql = `update tech_class set 
               name='${name}',
               icon='${icon}',
+              userIds='${userIds}',
               createTime='${dateFormat()}' where id ='${id}'`;
   const res = await query(sql);
   ctx.body = initResult({});
@@ -65,8 +76,12 @@ const delTechClass = async (ctx) => {
 
 // 查询技术文章列表
 const queryArticleList = async (ctx) => {
+  let userId = ''
+  if (ctx.headers.remons_token) {
+    userId = varifyToken(ctx.headers.remons_token).id;
+  };
   const { title, techClassId } = REQ_ARG({ ctx, method: 'GET' });
-  let sql = `SELECT A.id, A.title, A.url, A.techClassId, B.name AS techClassName, DATE_FORMAT(A.createTime,'%Y-%m-%d %H:%I:%S') AS createTime
+  let sql = `SELECT A.id, A.title, A.userIds, A.url, A.techClassId, B.name AS techClassName, DATE_FORMAT(A.createTime,'%Y-%m-%d %H:%I:%S') AS createTime
   FROM tech_article AS A
   LEFT OUTER JOIN tech_class AS B ON A.techClassId = B.id where 1=1 `;
   if (techClassId) {
@@ -74,6 +89,11 @@ const queryArticleList = async (ctx) => {
   }
   if (title) {
     sql += `and A.title = '${title}'`;
+  }
+  if (userId) {
+    sql += `AND A.userIds is null OR A.userIds LIKE '%${userId || ''}%'`
+  } else {
+    sql += `AND A.userIds is null`
   }
   const result = await search({ sql });
   ctx.body = result;
@@ -93,27 +113,28 @@ const createMarkdown = async ({ content, folder }) => {
 };
 // 添加文章
 const addArticle = async (ctx) => {
-  const { content, techClassId, title } = REQ_ARG({ ctx, method: 'POST' });
+  const { content, techClassId, title, userIds } = REQ_ARG({ ctx, method: 'POST' });
   const url = await createMarkdown({
     content,
     folder: `content/markdown/${title}.md`,
   });
   let sql = `INSERT INTO tech_article
-    (id,title,techClassId,url,createTime) VALUES 
+    (id,title,techClassId,url,userIds,createTime) VALUES 
     ('${uuid()}','${title}','${techClassId || ''}',
-    '${url || ''}','${dateFormat()}')`;
+    '${url || ''}','${userIds || ''}','${dateFormat()}')`;
   const res = await query(sql);
   ctx.body = initResult({});
 };
 // 更新文章
 const updateArticle = async (ctx) => {
-  const { content, id, title, techClassId } = REQ_ARG({ ctx, method: 'PUT' });
+  const { content, id, title, techClassId, userIds } = REQ_ARG({ ctx, method: 'PUT' });
   const url = await createMarkdown({
     content,
     folder: `content/markdown/${title}.md`,
   });
   let sql = `update tech_article set 
               title='${title}',
+              userIds='${userIds}',
               techClassId='${techClassId}',
               url='${url}' where id ='${id}'`;
   const res = await query(sql);
