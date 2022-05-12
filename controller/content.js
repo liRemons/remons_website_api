@@ -30,9 +30,9 @@ const queryTechClassList = async (ctx) => {
               FROM tech_class
               WHERE NAME LIKE '%${name || ''}%' `;
   if (userId) {
-    sql += `AND userIds is null OR userIds LIKE '%${userId || ''}%'`
+    sql += `AND userIds is null OR userIds='' OR userIds LIKE '%${userId || ''}%'`
   } else {
-    sql += `AND userIds is null`
+    sql += `AND userIds is null OR userIds=''`
   }
   const result = await search({ sql });
   ctx.body = result;
@@ -40,7 +40,6 @@ const queryTechClassList = async (ctx) => {
 // 新增技术分类
 const addTechClass = async (ctx) => {
   const { name, icon, userIds } = REQ_ARG({ ctx, method: 'POST' });
-  console.log(userIds);
   let sql = `INSERT INTO tech_class 
     (id,name,icon,userIds,createTime) VALUES 
     ('${uuid()}','${name}','${icon || ''}','${userIds || ''}','${dateFormat()}')`;
@@ -92,9 +91,9 @@ const queryArticleList = async (ctx) => {
     sql += `and A.title = '${title}'`;
   }
   if (userId) {
-    sql += `AND A.userIds is null OR A.userIds LIKE '%${userId || ''}%'`
+    sql += `AND A.userIds is null OR A.userIds='' OR A.userIds LIKE '%${userId || ''}%'`
   } else {
-    sql += `AND A.userIds is null`
+    sql += `AND A.userIds is null OR A.userIds=''`
   }
   const result = await search({ sql });
   ctx.body = result;
@@ -115,6 +114,16 @@ const createMarkdown = async ({ content, folder }) => {
 // 添加文章
 const addArticle = async (ctx) => {
   const { content, techClassId, title, userIds } = REQ_ARG({ ctx, method: 'POST' });
+  const articleSql = `select title from tech_article where title='${title}'`
+  const articleResult = await search({ sql: articleSql });
+  if(articleResult.data.length) {
+    ctx.body = {
+      code: 200,
+      success: false,
+      message: '标题重复'
+    }
+    return;
+  }
   const url = await createMarkdown({
     content,
     folder: `content/markdown/${title}.md`,

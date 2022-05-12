@@ -48,7 +48,7 @@ const varifyToken = (token) => {
   if (nowTime - ctime < expiresIn) {
     result = data;
   }
-  return result;
+  return result || {};
 };
 // 页数格式化
 const initPage = ({ page }) => {
