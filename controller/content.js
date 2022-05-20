@@ -9,7 +9,7 @@ const {
   dateFormat,
   REQ_ARG,
   mdToHTML,
-  varifyToken
+  varifyToken,
 } = require('../utils');
 
 const search = async ({ sql }) => {
@@ -21,18 +21,20 @@ const search = async ({ sql }) => {
 
 // 查询技术分类
 const queryTechClassList = async (ctx) => {
-  let userId = ''
+  let userId = '';
   if (ctx.headers.remons_token) {
     userId = varifyToken(ctx.headers.remons_token).id;
-  };
+  }
   const { name } = REQ_ARG({ ctx, method: 'GET' });
   let sql = `SELECT id,name,icon,DATE_FORMAT(createTime,'%Y-%m-%d %H:%I:%S') AS createTime,userIds
               FROM tech_class
               WHERE NAME LIKE '%${name || ''}%' `;
   if (userId) {
-    sql += `AND userIds is null OR userIds='' OR userIds LIKE '%${userId || ''}%'`
+    sql += `AND userIds is null OR userIds='' OR userIds LIKE '%${
+      userId || ''
+    }%'`;
   } else {
-    sql += `AND userIds is null OR userIds=''`
+    sql += `AND userIds is null OR userIds=''`;
   }
   const result = await search({ sql });
   ctx.body = result;
@@ -42,7 +44,9 @@ const addTechClass = async (ctx) => {
   const { name, icon, userIds } = REQ_ARG({ ctx, method: 'POST' });
   let sql = `INSERT INTO tech_class 
     (id,name,icon,userIds,createTime) VALUES 
-    ('${uuid()}','${name}','${icon || ''}','${userIds || ''}','${dateFormat()}')`;
+    ('${uuid()}','${name}','${icon || ''}','${
+    userIds || ''
+  }','${dateFormat()}')`;
   const res = await query(sql);
   ctx.body = initResult({});
 };
@@ -60,7 +64,7 @@ const updateTechClass = async (ctx) => {
   let sql = `update tech_class set 
               name='${name}',
               icon='${icon}',
-              userIds='${userIds}',
+              userIds='${userIds || null}',
               createTime='${dateFormat()}' where id ='${id}'`;
   const res = await query(sql);
   ctx.body = initResult({});
@@ -76,10 +80,10 @@ const delTechClass = async (ctx) => {
 
 // 查询技术文章列表
 const queryArticleList = async (ctx) => {
-  let userId = ''
+  let userId = '';
   if (ctx.headers.remons_token) {
     userId = varifyToken(ctx.headers.remons_token).id;
-  };
+  }
   const { title, techClassId } = REQ_ARG({ ctx, method: 'GET' });
   let sql = `SELECT A.id, A.title, A.userIds, A.url, A.techClassId, B.name AS techClassName, DATE_FORMAT(A.createTime,'%Y-%m-%d %H:%I:%S') AS createTime
   FROM tech_article AS A
@@ -91,9 +95,11 @@ const queryArticleList = async (ctx) => {
     sql += `and A.title = '${title}'`;
   }
   if (userId) {
-    sql += `AND A.userIds is null OR A.userIds='' OR A.userIds LIKE '%${userId || ''}%'`
+    sql += `AND A.userIds is null OR A.userIds='' OR A.userIds LIKE '%${
+      userId || ''
+    }%'`;
   } else {
-    sql += `AND A.userIds is null OR A.userIds=''`
+    sql += `AND A.userIds is null OR A.userIds=''`;
   }
   const result = await search({ sql });
   ctx.body = result;
@@ -113,15 +119,18 @@ const createMarkdown = async ({ content, folder }) => {
 };
 // 添加文章
 const addArticle = async (ctx) => {
-  const { content, techClassId, title, userIds } = REQ_ARG({ ctx, method: 'POST' });
-  const articleSql = `select title from tech_article where title='${title}'`
+  const { content, techClassId, title, userIds } = REQ_ARG({
+    ctx,
+    method: 'POST',
+  });
+  const articleSql = `select title from tech_article where title='${title}'`;
   const articleResult = await search({ sql: articleSql });
-  if(articleResult.data.length) {
+  if (articleResult.data.length) {
     ctx.body = {
       code: 200,
       success: false,
-      message: '标题重复'
-    }
+      message: '标题重复',
+    };
     return;
   }
   const url = await createMarkdown({
@@ -137,14 +146,17 @@ const addArticle = async (ctx) => {
 };
 // 更新文章
 const updateArticle = async (ctx) => {
-  const { content, id, title, techClassId, userIds } = REQ_ARG({ ctx, method: 'PUT' });
+  const { content, id, title, techClassId, userIds } = REQ_ARG({
+    ctx,
+    method: 'PUT',
+  });
   const url = await createMarkdown({
     content,
     folder: `content/markdown/${title}.md`,
   });
   let sql = `update tech_article set 
               title='${title}',
-              userIds='${userIds}',
+              userIds='${userIds || null}',
               techClassId='${techClassId}',
               url='${url}' where id ='${id}'`;
   const res = await query(sql);
