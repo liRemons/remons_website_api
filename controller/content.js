@@ -64,8 +64,11 @@ const updateTechClass = async (ctx) => {
   let sql = `update tech_class set 
               name='${name}',
               icon='${icon}',
-              userIds='${userIds || 'NULL'}',
-              createTime='${dateFormat()}' where id ='${id}'`;
+              createTime='${dateFormat()}'`;
+  if (userIds) {
+    sql += `,userIds='${userIds}'`;
+  }
+  sql += ` where id ='${id}'`;
   const res = await query(sql);
   ctx.body = initResult({});
 };
@@ -156,9 +159,12 @@ const updateArticle = async (ctx) => {
   });
   let sql = `update tech_article set 
               title='${title}',
-              userIds='${userIds || 'NULL'}',
               techClassId='${techClassId}',
-              url='${url}' where id ='${id}'`;
+              url='${url}'`;
+  if(userIds) {
+    sql += `,userIds='${userIds}'`
+  }
+  sql += ` where id ='${id}'`
   const res = await query(sql);
   ctx.body = initResult({});
 };
