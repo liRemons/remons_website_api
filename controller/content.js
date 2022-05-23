@@ -102,7 +102,7 @@ const queryArticleList = async (ctx) => {
       userId || ''
     }%') `;
   } else {
-    sql += `AND A.userIds is null OR A.userIds=''`;
+    sql += `AND (A.userIds is null OR A.userIds='') `;
   }
   const result = await search({ sql });
   ctx.body = result;
