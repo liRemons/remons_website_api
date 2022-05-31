@@ -98,11 +98,11 @@ const queryArticleList = async (ctx) => {
     sql += `and A.title = '${title}'`;
   }
   if (userId) {
-    sql += `AND A.userIds is null OR A.userIds='' OR A.userIds LIKE '%${
+    sql += `AND (A.userIds is null OR A.userIds='' OR A.userIds LIKE '%${
       userId || ''
-    }%'`;
+    }%') `;
   } else {
-    sql += `AND A.userIds is null OR A.userIds=''`;
+    sql += `AND (A.userIds is null OR A.userIds='') `;
   }
   const result = await search({ sql });
   ctx.body = result;
