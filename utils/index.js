@@ -125,6 +125,7 @@ const mdToHTML = (content) => {
             title: item.n.trim(),
             children: format(item.c),
             nodeName: `H${item.l}`,
+            nodeTitle: `<h${item.l}>${item.n.trim()}</h${item.l}>`
           };
           delete item.c;
           return obj;
