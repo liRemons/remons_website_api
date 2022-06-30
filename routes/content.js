@@ -39,5 +39,5 @@ router.put("/updateArticle", (ctx) => updateArticle(ctx));
 // 删除文章
 router.delete("/delArticle", (ctx) => delArticle(ctx));
 // 获取markdown
-router.post("/markdownToHTML", (ctx) => markdownToHTML(ctx));
+router.get("/markdownToHTML", (ctx) => markdownToHTML(ctx));
 module.exports = router;

@@ -1,6 +1,7 @@
 const query = require('./mysql');
 const fs = require('fs');
 const path = require('path');
+const http = require('http');
 const {
   upload,
   initPage,
@@ -59,13 +60,13 @@ const uploadTechClassIcon = async (ctx) => {
   };
 };
 
-const uploadMarkdownImg = async(ctx) => {
+const uploadMarkdownImg = async (ctx) => {
   const file = ctx.request.files.file; // 获取上传文件
   const path = await upload({ file, folder: 'content/markdown/icon' });
   ctx.body = {
     path,
   };
-}
+};
 
 // 更新技术分类
 const updateTechClass = async (ctx) => {
@@ -117,23 +118,22 @@ const queryArticleList = async (ctx) => {
   ctx.body = result;
 };
 
-
-
 const getArticleDetail = async (ctx) => {
   const { id } = REQ_ARG({ ctx, method: 'GET' });
   let sql = `select * from tech_article where id = '${id}'`;
   const res = await query({ sql });
- 
+
   const result = initResult({});
   if (res.length) {
-    const data = JSON.parse(JSON.stringify(res[0]))
-    if(res[0].content) {
-      data.content = new Buffer(res[0].content, 'base64').toString('utf8')
+    const data = JSON.parse(JSON.stringify(res[0]));
+    if (res[0].content) {
+      data.content = new Buffer(res[0].content, 'base64').toString('utf8');
     }
-    result.data = data
+    result.data = data;
   }
-  ctx.body = result
-}
+  ctx.body = result;
+  return result;
+};
 
 // 创建markdown文件
 const createMarkdown = async ({ content, folder }) => {
@@ -171,7 +171,9 @@ const addArticle = async (ctx) => {
   let sql = `INSERT INTO tech_article
     (id,title,techClassId,userIds,createTime,content) VALUES 
     ('${uuid()}','${title}','${techClassId || ''}',
-    '${userIds || ''}','${dateFormat()}','${new Buffer(content).toString('base64')}')`;
+    '${userIds || ''}','${dateFormat()}','${new Buffer(content).toString(
+    'base64'
+  )}')`;
   const res = await query(sql);
   ctx.body = initResult({});
 };
@@ -189,10 +191,10 @@ const updateArticle = async (ctx) => {
               title='${title}',
               techClassId='${techClassId}',
               content='${new Buffer(content).toString('base64')}'`;
-  if(userIds) {
-    sql += `,userIds='${userIds}'`
+  if (userIds) {
+    sql += `,userIds='${userIds}'`;
   }
-  sql += ` where id ='${id}'`
+  sql += ` where id ='${id}'`;
   const res = await query(sql);
   ctx.body = initResult({});
 };
@@ -207,9 +209,12 @@ const delArticle = async (ctx) => {
 };
 
 const markdownToHTML = async (ctx) => {
-  const { content } = REQ_ARG({ ctx, method: 'POST' });
+  const {
+    data: { content },
+    data,
+  } = await getArticleDetail(ctx);
   const result = await mdToHTML(content);
-  ctx.body = { data: result, ...initResult({}) };
+  ctx.body = { data: { ...result, ...data }, ...initResult({}) };
 };
 
 module.exports = {
@@ -225,5 +230,4 @@ module.exports = {
   updateArticle,
   delArticle,
   markdownToHTML,
-  
 };
