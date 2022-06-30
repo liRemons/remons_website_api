@@ -8,6 +8,8 @@ const {
   addArticle,
   queryArticleList,
   updateArticle,
+  getArticleDetail,
+  uploadMarkdownImg,
   delArticle,
   markdownToHTML
 } = require("../controller/content");
@@ -19,6 +21,8 @@ router.get("/queryTechClassList", (ctx) => queryTechClassList(ctx));
 router.post("/addTechClass", (ctx) => addTechClass(ctx));
 // 上传技术icon
 router.post("/uploadTechClassIcon", (ctx) => uploadTechClassIcon(ctx));
+// 上传markdown中图片
+router.post("/uploadMarkdownImg", (ctx) => uploadMarkdownImg(ctx));
 // 更新技术分类
 router.put("/updateTechClass", (ctx) => updateTechClass(ctx));
 // 删除技术分类
@@ -28,6 +32,8 @@ router.post("/addArticle", (ctx) => addArticle(ctx));
 
 // 查询文章列表
 router.get("/queryArticleList", (ctx) => queryArticleList(ctx));
+// 查询文章详情
+router.get("/getArticleDetail", (ctx) => getArticleDetail(ctx));
 // 更新文章
 router.put("/updateArticle", (ctx) => updateArticle(ctx));
 // 删除文章

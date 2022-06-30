@@ -2,7 +2,7 @@ const { varifyToken, encrypt } = require('../utils');
 const { DES_IV, DES_KEY } = require('../utils/config');
 const { search } = require('../controller/user');
 const authToken = async (ctx, next) => {
-  if (['/user/login', '/content/markdownToHTML'].includes(ctx.url)) {
+  if (['/user/login', '/content/markdownToHTML'].includes(ctx.url) || ctx.url.includes('upload')) {
     await next();
     return;
   }

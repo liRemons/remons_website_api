@@ -58,6 +58,15 @@ const uploadTechClassIcon = async (ctx) => {
     path,
   };
 };
+
+const uploadMarkdownImg = async(ctx) => {
+  const file = ctx.request.files.file; // 获取上传文件
+  const path = await upload({ file, folder: 'content/markdown/icon' });
+  ctx.body = {
+    path,
+  };
+}
+
 // 更新技术分类
 const updateTechClass = async (ctx) => {
   const { name, id, icon, userIds } = REQ_ARG({ ctx, method: 'PUT' });
@@ -107,6 +116,23 @@ const queryArticleList = async (ctx) => {
   const result = await search({ sql });
   ctx.body = result;
 };
+
+
+
+const getArticleDetail = async (ctx) => {
+  const { id } = REQ_ARG({ ctx, method: 'GET' });
+  let sql = `select * from tech_article where id = '${id}'`;
+  const res = await query({ sql });
+ 
+  const result = initResult({});
+  if (res.length) {
+    const data = JSON.parse(JSON.stringify(res[0]))
+    data.content = new Buffer(res[0].content, 'base64').toString('utf8')
+    result.data = data
+  }
+  ctx.body = result
+}
+
 // 创建markdown文件
 const createMarkdown = async ({ content, folder }) => {
   return new Promise((resolve) => {
@@ -136,14 +162,14 @@ const addArticle = async (ctx) => {
     };
     return;
   }
-  const url = await createMarkdown({
-    content,
-    folder: `content/markdown/${title}.md`,
-  });
+  // const url = await createMarkdown({
+  //   content,
+  //   folder: `content/markdown/${title}.md`,
+  // });
   let sql = `INSERT INTO tech_article
-    (id,title,techClassId,url,userIds,createTime) VALUES 
+    (id,title,techClassId,userIds,createTime,content) VALUES 
     ('${uuid()}','${title}','${techClassId || ''}',
-    '${url || ''}','${userIds || ''}','${dateFormat()}')`;
+    '${userIds || ''}','${dateFormat()}','${new Buffer(content).toString('base64')}')`;
   const res = await query(sql);
   ctx.body = initResult({});
 };
@@ -153,14 +179,14 @@ const updateArticle = async (ctx) => {
     ctx,
     method: 'PUT',
   });
-  const url = await createMarkdown({
-    content,
-    folder: `content/markdown/${title}.md`,
-  });
+  // const url = await createMarkdown({
+  //   content,
+  //   folder: `content/markdown/${title}.md`,
+  // });
   let sql = `update tech_article set 
               title='${title}',
               techClassId='${techClassId}',
-              url='${url}'`;
+              content='${new Buffer(content).toString('base64')}'`;
   if(userIds) {
     sql += `,userIds='${userIds}'`
   }
@@ -188,11 +214,14 @@ module.exports = {
   queryTechClassList,
   addTechClass,
   uploadTechClassIcon,
+  uploadMarkdownImg,
   updateTechClass,
   delTechClass,
   addArticle,
   queryArticleList,
+  getArticleDetail,
   updateArticle,
   delArticle,
   markdownToHTML,
+  
 };
