@@ -127,7 +127,9 @@ const getArticleDetail = async (ctx) => {
   const result = initResult({});
   if (res.length) {
     const data = JSON.parse(JSON.stringify(res[0]))
-    data.content = new Buffer(res[0].content, 'base64').toString('utf8')
+    if(res[0].content) {
+      data.content = new Buffer(res[0].content, 'base64').toString('utf8')
+    }
     result.data = data
   }
   ctx.body = result
