@@ -62,7 +62,7 @@ const uploadTechClassIcon = async (ctx) => {
 
 const uploadMarkdownImg = async (ctx) => {
   const file = ctx.request.files.file; // 获取上传文件
-  const path = await upload({ file, folder: 'content/markdown/icon' });
+  const path = await upload({ file, folder: 'content/markdown/img' });
   ctx.body = {
     path,
   };
