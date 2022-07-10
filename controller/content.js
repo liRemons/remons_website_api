@@ -1,7 +1,8 @@
 const query = require('./mysql');
 const fs = require('fs');
 const path = require('path');
-const http = require('http');
+const fsExtra = require('fs-extra');
+const compressing = require('compressing');
 const {
   upload,
   initPage,
