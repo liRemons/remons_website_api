@@ -57,11 +57,12 @@ const initPage = ({ page }) => {
   return { limitStart, limitEnd };
 };
 // 格式化结果输出
-const initResult = ({ code = 200, success = true, msg = '成功' }) => {
+const initResult = ({ code = 200, success = true, msg = '成功', ...others }) => {
   return {
     code,
     success,
     msg,
+    ...others
   };
 };
 // 获取请求参数
