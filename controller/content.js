@@ -236,7 +236,7 @@ const downloadMarkdown = async (ctx) => {
   const pathName = `zip/${+new Date()}-markdown.zip`
   compressing.zip.compressDir('./download', `./${pathName}`)
   const result = initResult({
-    path: `/download/${pathName}`
+    path: `/${pathName}`
   });
   ctx.body = result;
 }
