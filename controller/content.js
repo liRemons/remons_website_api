@@ -217,6 +217,22 @@ const markdownToHTML = async (ctx) => {
   ctx.body = { data: { ...result, ...data }, ...initResult({}) };
 };
 
+const downloadMarkdown = async (ctx) => {
+  const { data } = await queryArticleList(ctx) || {};
+  await fsExtra.emptyDir('./download');
+  const promiseArr = data.map(async item => {
+    const detail = await getDetail(item.id);
+    const file = `./download/${item.techClassName}/${item.title}.md`;
+    fsExtra.outputFileSync(file, detail.data.content)
+    return detail;
+  });
+  await Promise.all(promiseArr);
+  compressing.zip.compressDir('./download', `${+new Date()}-markdown.zip`)
+  const result = initResult({});
+  ctx.body = result;
+}
+
+
 module.exports = {
   queryTechClassList,
   addTechClass,
@@ -230,4 +246,5 @@ module.exports = {
   updateArticle,
   delArticle,
   markdownToHTML,
+  downloadMarkdown
 };

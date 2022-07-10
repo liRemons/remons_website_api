@@ -11,7 +11,8 @@ const {
   getArticleDetail,
   uploadMarkdownImg,
   delArticle,
-  markdownToHTML
+  markdownToHTML,
+  downloadMarkdown
 } = require("../controller/content");
 router.prefix("/content");
 
@@ -40,4 +41,5 @@ router.put("/updateArticle", (ctx) => updateArticle(ctx));
 router.delete("/delArticle", (ctx) => delArticle(ctx));
 // 获取markdown
 router.get("/markdownToHTML", (ctx) => markdownToHTML(ctx));
+router.get("/downloadMarkdown", (ctx) => downloadMarkdown(ctx));
 module.exports = router;
