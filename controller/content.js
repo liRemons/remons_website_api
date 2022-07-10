@@ -233,8 +233,11 @@ const downloadMarkdown = async (ctx) => {
     return detail;
   });
   await Promise.all(promiseArr);
-  compressing.zip.compressDir('./download', `./zip/${+new Date()}-markdown.zip`)
-  const result = initResult({});
+  const pathName = `zip/${+new Date()}-markdown.zip`
+  compressing.zip.compressDir('./download', `./${pathName}`)
+  const result = initResult({
+    path: `/download/${pathName}`
+  });
   ctx.body = result;
 }
 
