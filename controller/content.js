@@ -109,21 +109,19 @@ const queryArticleList = async (ctx) => {
     sql += `and A.title = '${title}'`;
   }
   if (userId) {
-    sql += `AND (A.userIds is null OR A.userIds='' OR A.userIds LIKE '%${
-      userId || ''
-    }%') `;
+    sql += `AND (A.userIds is null OR A.userIds='' OR A.userIds LIKE '%${userId || ''
+      }%') `;
   } else {
     sql += `AND (A.userIds is null OR A.userIds='') `;
   }
   const result = await search({ sql });
   ctx.body = result;
+  return result;
 };
 
-const getArticleDetail = async (ctx) => {
-  const { id } = REQ_ARG({ ctx, method: 'GET' });
+const getDetail = async (id) => {
   let sql = `select * from tech_article where id = '${id}'`;
   const res = await query({ sql });
-
   const result = initResult({});
   if (res.length) {
     const data = JSON.parse(JSON.stringify(res[0]));
@@ -132,6 +130,12 @@ const getArticleDetail = async (ctx) => {
     }
     result.data = data;
   }
+  return result;
+}
+
+const getArticleDetail = async (ctx) => {
+  const { id } = REQ_ARG({ ctx, method: 'GET' });
+  const result = await getDetail(id)
   ctx.body = result;
   return result;
 };
