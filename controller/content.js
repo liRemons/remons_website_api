@@ -225,6 +225,7 @@ const markdownToHTML = async (ctx) => {
 const downloadMarkdown = async (ctx) => {
   const { data } = await queryArticleList(ctx) || {};
   await fsExtra.emptyDir('./download');
+  await fsExtra.emptyDir('./zip');
   const promiseArr = data.map(async item => {
     const detail = await getDetail(item.id);
     const file = `./download/${item.techClassName}/${item.title}.md`;
@@ -232,7 +233,7 @@ const downloadMarkdown = async (ctx) => {
     return detail;
   });
   await Promise.all(promiseArr);
-  compressing.zip.compressDir('./download', `${+new Date()}-markdown.zip`)
+  compressing.zip.compressDir('./download', `./zip/${+new Date()}-markdown.zip`)
   const result = initResult({});
   ctx.body = result;
 }
