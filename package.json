@@ -32,6 +32,7 @@
     "methods-r": "^1.2.1",
     "mysql": "^2.18.1",
     "pug": "^2.0.3",
+    "puppeteer": "^18.0.0",
     "require-directory": "^2.1.1",
     "uslug": "^1.0.4",
     "uuid": "^8.3.2"

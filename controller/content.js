@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const fsExtra = require('fs-extra');
 const compressing = require('compressing');
+const puppeteer = require('puppeteer');
 const {
   upload,
   initPage,
@@ -241,6 +242,61 @@ const downloadMarkdown = async (ctx) => {
   ctx.body = result;
 }
 
+const createHtml = (ctx) => {
+  const { dom, css } = REQ_ARG({ ctx, method: 'POST' });
+
+  const content = `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>${css} </style>
+  </head>
+  
+  <body>
+    ${dom}
+  </body>
+  </html>
+  `
+
+  const folder = 'index.html'
+  fs.writeFile(
+    path.join(__dirname, '../html/' + folder),
+    content,
+    async (err) => {
+      if (err) throw err;
+      // 启动服务
+      const browser = await puppeteer.launch();
+      // 打开标签页
+      const page = await browser.newPage();
+      // 转到该地址
+      await page.goto('http://remons.cn:3009/html/index.html');
+      // html页面转pdf并保存至path
+      await page.pdf({
+        pageRanges: '',
+        margin: { top: 10, left: 5, right: 5, bottom: 10 },
+        path: path.join(__dirname, '../html/' + "index.pdf"),
+        format: 'A4',
+        printBackground: true,
+        omitBackground: true
+      })
+      // await page.screenshot({
+      //   quality: 100,
+      //   fullPage: true,
+      //   type: 'webp',
+      //   path: path.join(__dirname, '../html/' + "test.jpeg"),
+      // })
+      // 关闭浏览器
+      await browser.close();
+    }
+  );
+
+  ctx.body = {}
+}
+
 
 module.exports = {
   queryTechClassList,
@@ -255,5 +311,6 @@ module.exports = {
   updateArticle,
   delArticle,
   markdownToHTML,
-  downloadMarkdown
+  downloadMarkdown,
+  createHtml
 };
