@@ -235,7 +235,7 @@ const downloadMarkdown = async (ctx) => {
   });
   await Promise.all(promiseArr);
   const pathName = `zip/${+new Date()}-markdown.zip`
-  compressing.zip.compressDir('./download', `./${pathName}`)
+  await compressing.zip.compressDir('./download', `./${pathName}`)
   const result = initResult({
     path: `/${pathName}`
   });
