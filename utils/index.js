@@ -104,7 +104,7 @@ const mdToHTML = (content) => {
   })
     .use(markdownItAnchor, {
       permalink: true,
-      permalinkBefore: true,
+      // permalinkBefore: true,
       // permalinkSymbol: '#',
       slugify: uslugify,
     })
