@@ -103,10 +103,10 @@ const mdToHTML = (content) => {
     },
   })
     .use(markdownItAnchor, {
-      permalink: true,
-      permalinkBefore: true,
-      permalinkSymbol: '#',
-      slugify: uslugify,
+      // permalink: true,
+      // permalinkBefore: true,
+      // permalinkSymbol: '#',
+      // slugify: uslugify,
     })
     .use(markdownItTOC, {
       callback: (html, ast) => {
